@@ -146,6 +146,25 @@ data:
           containers:
           - image: alpine
             command: ["/bin/printenv"]
+    postsubmits:
+      lillianwang16/cloud-application-development:
+        - name: post-cloud-application-development-push-images
+          cluster: k8s-infra-prow-build-trusted
+          decorate: true
+          branches:
+            - ^master$
+          spec:
+            serviceAccountName: gcb-builder
+            containers:
+              - image: gcr.io/k8s-testimages/image-builder:v20190906-d5d7ce3
+                command:
+                  - /run.sh
+                args:
+                  - --project=voltaic-triode-303809
+                  # This is the same as above, but with -gcb appended
+                  - --scratch-bucket=gs://voltaic-triode-303809
+                  - --env-passthrough=PULL_BASE_REF
+                  - .
 ---
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
