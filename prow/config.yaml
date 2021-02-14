@@ -131,11 +131,11 @@ data:
     postsubmits:
       lillianwang16/cloud-application-development:
       - name: test-postsubmit
-      decorate: true
+        decorate: true
         spec:
           containers:
           - image: alpine
-          command: ["/bin/printenv"]
+            command: ["/bin/printenv"]
     presubmits:
       lillianwang16/cloud-application-development:
       - name: test-presubmit
