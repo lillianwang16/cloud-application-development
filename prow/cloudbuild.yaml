@@ -1,0 +1,31 @@
+# See https://cloud.google.com/cloud-build/docs/build-config
+
+# this must be specified in seconds. If omitted, defaults to 600s (10 mins)
+timeout: 1200s
+steps:
+- name: golang:1.13
+  args: ['go', 'build', '-o', 'somebin', '.']
+  env:
+  - CGO_ENABLED=0
+  - GOOS=linux
+  - GOARCH=amd64
+- name: gcr.io/cloud-builders/docker
+  args:
+  - build
+  - --tag=gcr.io/$PROJECT_ID/some-image:$_GIT_TAG
+  - --tag=gcr.io/$PROJECT_ID/some-image:latest
+  - .
+  # default cloudbuild has HOME=/builder/home and docker buildx is in /root/.docker/cli-plugins/docker-buildx
+  # set the home to /root explicitly to if using docker buildx
+  # - HOME=/root
+substitutions:
+  _GIT_TAG: '12345'
+  _PULL_BASE_REF: 'master'
+# this prevents errors if you don't use both _GIT_TAG and _PULL_BASE_REF,
+# or any new substitutions added in the future.
+options:
+  substitution_option: ALLOW_LOOSE
+# this will push these images, or cause the build to fail if they weren't built.
+images:
+- 'gcr.io/$PROJECT_ID/some-image:$_GIT_TAG'
+- 'gcr.io/$PROJECT_ID/some-image:latest'
