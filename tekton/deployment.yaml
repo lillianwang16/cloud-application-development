@@ -1,12 +1,37 @@
-apiVersion: serving.knative.dev/v1alpha1
-kind: Service
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: hello-world
+  labels:
+    app: nginx-1
+  name: nginx-1
   namespace: default
 spec:
-  runLatest:
-    configuration:
-      revisionTemplate:
-        spec:
-          container:
-            image: __IMAGE__
+  progressDeadlineSeconds: 600
+  replicas: 3
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: nginx-1
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: nginx-1
+    spec:
+      containers:
+      - image: __IMAGE__@__DIGEST__
+        imagePullPolicy: IfNotPresent
+        name: hello-app-sha256-1
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
