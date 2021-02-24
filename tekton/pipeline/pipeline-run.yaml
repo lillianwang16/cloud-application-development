@@ -1,0 +1,23 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  generateName: hello-world-pr-
+spec:
+  pipelineRef:
+    name: build-and-deploy-pipeline
+  params:
+    - name: gitUrl
+      value: https://github.com/lillianwang16/cloud-application-development
+    - name: gitRevision
+      value: HEAD
+    - name: pathToYamlFile
+      value: tekton/deployment.yaml
+    - name: imageUrl
+      value: gcr.io/autodeploytekton/hello-app
+    - name: imageTag
+      value: "9.0.1"
+  serviceAccountName: pipeline-account
+  workspaces:
+    - name: git-source
+      persistentVolumeClaim:
+        claimName: hello-world-source-pvc
