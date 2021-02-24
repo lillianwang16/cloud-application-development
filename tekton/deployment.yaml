@@ -25,13 +25,9 @@ spec:
     spec:
       containers:
       - image: __IMAGE__@__DIGEST__
-        imagePullPolicy: IfNotPresent
-        name: hello-app-sha256-1
-        resources: {}
-        terminationMessagePath: /dev/termination-log
-        terminationMessagePolicy: File
+        name: hello-app
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       schedulerName: default-scheduler
       securityContext: {}
-      terminationGracePeriodSeconds: 30
+      terminationGracePeriodSeconds: 30  
